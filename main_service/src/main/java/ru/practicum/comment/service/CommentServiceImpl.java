@@ -41,7 +41,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentDto> getAllByUser(Long userId, Pageable pageable) {
         User user = checkAndGetUser(userId);
-        
         return commentRepository.findAllByUser(user, pageable)
                 .stream()
                 .map(CommentMapper::toCommentDto)
