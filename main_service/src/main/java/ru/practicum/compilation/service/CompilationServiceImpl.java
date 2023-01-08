@@ -32,6 +32,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public List<CompilationDto> getAll(Boolean pinned, PageRequest pageRequest) {
         if (pinned == null) {
+
             return compilationRepository.findAll(pageRequest)
                     .stream()
                     .map(CompilationMapper::toCompilationDto)
