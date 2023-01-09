@@ -1,7 +1,7 @@
 package ru.practicum.event.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.repository.CategoryRepository;
@@ -20,7 +20,7 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static ru.practicum.event.model.State.*;
 import static ru.practicum.participation.model.StatusRequest.CONFIRMED;
+import static ru.practicum.utility.Constant.DATE_TIME_FORMAT;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,33 +39,29 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<EventDto> getAllByAdmin(List<Long> userIds, List<String> states, List<Long> categoryIds,
-                                        String rangeStart, String rangeEnd, PageRequest pageRequest) {
-        List<State> stateList = states == null ? null : states
-                .stream()
-                .map(State::valueOf)
-                .collect(Collectors.toList());
+                                        LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable) {
+        List<State> stateList = new ArrayList<>();
+        if (states != null) {
+            stateList = states.stream()
+                    .map(State::valueOf)
+                    .collect(Collectors.toList());
+        }
 
-        return eventRepository.searchEventsByAdmin(userIds, stateList, categoryIds, pageRequest)
+        return eventRepository.searchEventsByAdmin(userIds, stateList, categoryIds, pageable, rangeStart, rangeEnd)
                 .stream()
-                .filter(event -> rangeStart != null ?
-                        event.getEventDate().isAfter(LocalDateTime.parse(rangeStart, DATE_TIME_FORMATTER)) :
-                        event.getEventDate().isAfter(LocalDateTime.now())
-                                && rangeEnd != null ? event.getEventDate().isBefore(LocalDateTime.parse(rangeEnd,
-                                DATE_TIME_FORMATTER)) : event.getEventDate().isBefore(LocalDateTime.MAX))
                 .map(EventMapper::toEventDto)
                 .map(this::setConfirmedRequests)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ShortEventDto> getByUserId(Long userId, PageRequest pageRequest) {
+    public List<ShortEventDto> getByUserId(Long userId, Pageable pageable) {
         checkAndGetUser(userId);
 
-        return eventRepository.findAllByInitiatorId(userId, pageRequest)
+        return eventRepository.findAllByInitiatorId(userId, pageable)
                 .stream()
                 .map(EventMapper::toShortEventDto)
                 .map(this::setConfirmedRequests)
@@ -72,26 +69,15 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<ShortEventDto> getAll(String text, List<Long> categoryIds, Boolean paid, String rangeStart,
-                                      String rangeEnd, Boolean onlyAvailable, String sort, PageRequest pageRequest) {
-        List<ShortEventDto> events = eventRepository.searchEvents(text, categoryIds, paid, PUBLISHED, pageRequest)
+    public List<ShortEventDto> getAll(String text, List<Long> categoryIds, Boolean paid, LocalDateTime rangeStart,
+                                      LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Pageable pageable) {
+        List<ShortEventDto> events = eventRepository
+                .searchEvents(text, categoryIds, paid, PUBLISHED, pageable, rangeStart, rangeEnd, onlyAvailable)
                 .stream()
-                .filter(event -> rangeStart != null ?
-                        event.getEventDate().isAfter(LocalDateTime.parse(rangeStart, DATE_TIME_FORMATTER)) :
-                        event.getEventDate().isAfter(LocalDateTime.now())
-                                && rangeEnd != null ? event.getEventDate().isBefore(LocalDateTime.parse(rangeEnd,
-                                DATE_TIME_FORMATTER)) :
-                                event.getEventDate().isBefore(LocalDateTime.MAX))
                 .map(EventMapper::toShortEventDto)
                 .map(this::setConfirmedRequests)
                 .collect(Collectors.toList());
-        if (Boolean.TRUE.equals(onlyAvailable)) {
-            events = events.stream().filter(shortEventDto ->
-                    shortEventDto.getConfirmedRequests() < eventRepository
-                            .findById(shortEventDto.getId()).get().getParticipantLimit() ||
-                            eventRepository.findById(shortEventDto.getId()).get().getParticipantLimit() == 0)
-                    .collect(Collectors.toList());
-        }
+
         if (sort != null) {
             switch (sort) {
                 case "EVENT_DATE":
@@ -107,7 +93,7 @@ public class EventServiceImpl implements EventService {
                             .collect(Collectors.toList());
                     break;
                 default:
-                    throw new BadRequestException("can be sorted only by views or event date");
+                    throw new BadRequestException("events can be sorted only by views or event date");
             }
         }
 
@@ -120,10 +106,6 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public EventDto create(Long userId, NewEventDto eventDto) {
-        if (eventDto.getAnnotation() == null || eventDto.getDescription() == null || eventDto.getEventDate() == null ||
-                eventDto.getLocation() == null || eventDto.getTitle() == null) {
-            throw new BadRequestException("required information must not be null");
-        }
         User user = checkAndGetUser(userId);
         Event event = EventMapper.toEvent(eventDto);
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
@@ -203,8 +185,7 @@ public class EventServiceImpl implements EventService {
         }
         Optional.ofNullable(eventDto.getDescription()).ifPresent(event::setDescription);
         if (eventDto.getEventDate() != null) {
-            LocalDateTime date = LocalDateTime.parse(eventDto.getEventDate(),
-                    DATE_TIME_FORMATTER);
+            LocalDateTime date = LocalDateTime.parse(eventDto.getEventDate(), DATE_TIME_FORMAT);
             if (date.isBefore(LocalDateTime.now().plusHours(2))) {
                 throw new BadRequestException("date event is too late");
             }
@@ -248,7 +229,7 @@ public class EventServiceImpl implements EventService {
         }
         Optional.ofNullable(eventDto.getDescription()).ifPresent(event::setDescription);
         if (eventDto.getEventDate() != null) {
-            event.setEventDate(LocalDateTime.parse(eventDto.getEventDate(), DATE_TIME_FORMATTER));
+            event.setEventDate(LocalDateTime.parse(eventDto.getEventDate(), DATE_TIME_FORMAT));
         }
         if (eventDto.getLocation() != null) {
             Location location = locationRepository.save(LocationMapper.toLocation(eventDto.getLocation()));

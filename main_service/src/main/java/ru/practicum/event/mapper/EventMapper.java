@@ -8,9 +8,9 @@ import ru.practicum.event.model.Event;
 import ru.practicum.user.mapper.UserMapper;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static ru.practicum.event.model.State.PENDING;
+import static ru.practicum.utility.Constant.DATE_TIME_FORMAT;
 
 public class EventMapper {
     public static EventDto toEventDto(Event event) {
@@ -20,10 +20,10 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .createdOn(event.getCreatedOn()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .format(DATE_TIME_FORMAT))
                 .description(event.getDescription())
                 .eventDate(event.getEventDate()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .format(DATE_TIME_FORMAT))
                 .initiator(UserMapper.toShortUserDto(event.getInitiator()))
                 .location(LocationMapper.toLocationDto(event.getLocation()))
                 .paid(event.getPaid())
@@ -43,7 +43,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .eventDate(event.getEventDate()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .format(DATE_TIME_FORMAT))
                 .initiator(UserMapper.toShortUserDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .title(event.getTitle())
@@ -57,7 +57,7 @@ public class EventMapper {
                 .annotation(eventDto.getAnnotation())
                 .description(eventDto.getDescription())
                 .eventDate(LocalDateTime
-                        .parse(eventDto.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .parse(eventDto.getEventDate(), DATE_TIME_FORMAT))
                 .paid(eventDto.getPaid())
                 .participantLimit(eventDto.getParticipantLimit())
                 .requestModeration(eventDto.getRequestModeration())

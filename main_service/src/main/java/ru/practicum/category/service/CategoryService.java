@@ -1,13 +1,13 @@
 package ru.practicum.category.service;
 
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 
 import java.util.List;
 
 public interface CategoryService {
-    List<CategoryDto> getAll(PageRequest pageRequest);
+    List<CategoryDto> getAll(Pageable pageable);
 
     CategoryDto update(CategoryDto categoryDto);
 

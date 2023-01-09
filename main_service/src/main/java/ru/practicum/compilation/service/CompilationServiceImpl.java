@@ -1,7 +1,7 @@
 package ru.practicum.compilation.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.CompilationDto;
@@ -12,7 +12,6 @@ import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.dto.ShortEventDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.participation.repository.ParticipationRepository;
 
@@ -30,16 +29,16 @@ public class CompilationServiceImpl implements CompilationService {
     private final ParticipationRepository participationRepository;
 
     @Override
-    public List<CompilationDto> getAll(Boolean pinned, PageRequest pageRequest) {
+    public List<CompilationDto> getAll(Boolean pinned, Pageable pageable) {
         if (pinned == null) {
 
-            return compilationRepository.findAll(pageRequest)
+            return compilationRepository.findAll(pageable)
                     .stream()
                     .map(CompilationMapper::toCompilationDto)
                     .collect(Collectors.toList());
         }
 
-        return compilationRepository.findAllByPinned(pinned, pageRequest)
+        return compilationRepository.findAllByPinned(pinned, pageable)
                 .stream()
                 .map(CompilationMapper::toCompilationDto)
                 .map(this::setViewsAndConfirmedRequests)
@@ -49,9 +48,6 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public CompilationDto create(NewCompilationDto compilationDto) {
-        if (compilationDto.getTitle() == null) {
-            throw new BadRequestException("compilation title must not be null");
-        }
         Compilation compilation = CompilationMapper.toCompilation(compilationDto);
         List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
         compilation.setEvents(events);
@@ -113,8 +109,8 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private ShortEventDto setConfirmedRequests(ShortEventDto eventDto) {
-        eventDto.setConfirmedRequests(participationRepository.countParticipationByEventIdAndStatus(eventDto.getId(),
-                CONFIRMED));
+        eventDto.setConfirmedRequests(
+                participationRepository.countParticipationByEventIdAndStatus(eventDto.getId(), CONFIRMED));
 
         return eventDto;
     }

@@ -21,12 +21,13 @@ public class HitController {
         hitService.saveHit(endpointHit);
     }
 
-    @GetMapping("stats")
+    @GetMapping("/stats")
     public List<ViewStats> getStats(@RequestParam String start,
                                     @RequestParam String end,
                                     @RequestParam(required = false) List<String> uris,
-                                    @RequestParam(defaultValue = "false") Boolean uniq) {
+                                    @RequestParam(defaultValue = "false") Boolean unique) {
         log.info("get statistic for uris {}", uris);
-        return hitService.getStats(start, end, uris, uniq);
+
+        return hitService.getStats(start, end, uris, unique);
     }
 }

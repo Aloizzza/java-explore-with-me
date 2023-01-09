@@ -1,7 +1,7 @@
 package ru.practicum.category.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
@@ -25,8 +25,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final EventRepository eventRepository;
 
     @Override
-    public List<CategoryDto> getAll(PageRequest pageRequest) {
-        return categoryRepository.findAll(pageRequest)
+    public List<CategoryDto> getAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable)
                 .stream()
                 .map(CategoryMapper::toCategoryDto)
                 .collect(Collectors.toList());
@@ -48,9 +48,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto create(NewCategoryDto categoryDto) {
         String name = categoryDto.getName();
-        if (name == null) {
-            throw new BadRequestException("category name cannot be null");
-        }
         if (categoryRepository.findByName(name).isPresent()) {
             throw new ConflictException("category is already exists");
         }
@@ -74,9 +71,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private Category getAndCheckCategory(Long id) {
-        if (id == null) {
-            throw new BadRequestException("category id cannot be null");
-        }
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category with id = " + id + " is not found"));
     }

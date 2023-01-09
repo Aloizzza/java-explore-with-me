@@ -9,10 +9,11 @@ import ru.practicum.hit.model.ViewStats;
 import ru.practicum.hit.repository.HitRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static ru.practicum.utility.ConstantStats.DATE_TIME_FORMAT;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,8 +29,8 @@ public class HitServiceImpl implements HitService {
 
     @Override
     public List<ViewStats> getStats(String start, String end, List<String> uris, Boolean uniq) {
-        LocalDateTime startDate = LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        LocalDateTime endDate = LocalDateTime.parse(end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime startDate = LocalDateTime.parse(start, DATE_TIME_FORMAT);
+        LocalDateTime endDate = LocalDateTime.parse(end, DATE_TIME_FORMAT);
         List<ViewStats> hits;
         if (Boolean.TRUE.equals(uniq)) {
             hits = hitRepository.findDistinct(startDate, endDate)
@@ -48,8 +49,6 @@ public class HitServiceImpl implements HitService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
-    ////////////////////////////////////
 
     private Integer countViewsByUri(String uri) {
         return hitRepository.countByUri(uri);

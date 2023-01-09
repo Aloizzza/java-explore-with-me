@@ -5,7 +5,8 @@ import ru.practicum.hit.model.Hit;
 import ru.practicum.hit.model.ViewStats;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static ru.practicum.utility.ConstantStats.DATE_TIME_FORMAT;
 
 public class HitMapper {
     public static Hit toHit(EndpointHit endpointHit) {
@@ -15,8 +16,7 @@ public class HitMapper {
                 .app(endpointHit.getApp())
                 .ip(endpointHit.getIp())
                 .uri(endpointHit.getUri())
-                .timestamp(LocalDateTime.parse(endpointHit.getTimestamp(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .timestamp(LocalDateTime.parse(endpointHit.getTimestamp(), DATE_TIME_FORMAT))
                 .build();
     }
 

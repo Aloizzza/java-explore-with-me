@@ -1,10 +1,9 @@
 package ru.practicum.user.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.dto.UserDto;
@@ -22,15 +21,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserDto> getAll(List<Long> ids, PageRequest pageRequest) {
+    public List<UserDto> getAll(List<Long> ids, Pageable pageable) {
         if (ids.isEmpty()) {
-            return userRepository.findAll(pageRequest)
+            return userRepository.findAll(pageable)
                     .stream()
                     .map(UserMapper::toUserDto)
                     .collect(Collectors.toList());
         }
 
-        return userRepository.findAllByIdIn(ids, pageRequest)
+        return userRepository.findAllByIdIn(ids, pageable)
                 .stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
@@ -39,9 +38,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto create(UserDto userDto) {
-        if (userDto.getName() == null || userDto.getEmail() == null) {
-            throw new BadRequestException("name and email must not be null");
-        }
         if (userRepository.findByName(userDto.getName()).isPresent()) {
             throw new ConflictException("this name is already occupied");
         }

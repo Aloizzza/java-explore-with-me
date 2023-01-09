@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS events
     request_moderation BOOLEAN,
     state              VARCHAR(50),
     title              VARCHAR(255)                                        NOT NULL,
-    views              BIGINT                                              NOT NULL
+    views              BIGINT                                              NOT NULL,
+    confirmed_requests INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS participations

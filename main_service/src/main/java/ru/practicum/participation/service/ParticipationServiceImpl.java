@@ -32,15 +32,14 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Transactional
     @Override
     public ParticipationDto create(Long userId, Long eventId) {
-        if (userId == null || eventId == null) {
+/*        if (userId == null || eventId == null) {
             throw new BadRequestException("user id and event id must not be null");
-        }
+        }*/
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("user with id = " + userId + " not found"));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("event with id = " + eventId + " not found"));
+        Event event = checkAndGetEvent(eventId);
         if (participationRepository.findByEventIdAndRequester(eventId, user) != null) {
-            throw new BadRequestException("participation request already exist");
+            throw new BadRequestException("participation request already exists");
         }
         Participation participation = Participation
                 .builder()
@@ -53,11 +52,11 @@ public class ParticipationServiceImpl implements ParticipationService {
             throw new BadRequestException("requester can't be initiator of event");
         }
         if (!participation.getEvent().getState().equals(PUBLISHED)) {
-            throw new BadRequestException("event not published");
+            throw new BadRequestException("event is not published");
         }
         if (participation.getEvent().getParticipantLimit() <= participationRepository
                 .countParticipationByEventIdAndStatus(eventId, CONFIRMED)) {
-            throw new BadRequestException("the limit of requests for participation has been exhausted");
+            throw new BadRequestException("limit of requests for participation has been exhausted");
         }
         if (Boolean.TRUE.equals(participation.getEvent().getRequestModeration())) {
             participation.setStatus(PENDING);
@@ -102,8 +101,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Transactional
     @Override
     public ParticipationDto reject(Long eventId, Long userId, Long reqId) {
-        Participation participation = participationRepository.findById(reqId)
-                .orElseThrow(() -> new NotFoundException("participation request with id = " + reqId + " not found"));
+        Participation participation = checkAndGetParticipation(reqId);
         Event event = checkAndGetEvent(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
             throw new BadRequestException("only initiator of event can reject request to this event");
@@ -120,8 +118,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Transactional
     @Override
     public ParticipationDto confirm(Long eventId, Long userId, Long reqId) {
-        Participation participation = participationRepository.findById(reqId)
-                .orElseThrow(() -> new NotFoundException("participation request with id = " + reqId + " not found"));
+        Participation participation = checkAndGetParticipation(reqId);
         Event event = checkAndGetEvent(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
             throw new BadRequestException("only initiator of event can reject participation request to this event");
@@ -146,5 +143,10 @@ public class ParticipationServiceImpl implements ParticipationService {
     private Event checkAndGetEvent(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("event with id = " + id + " not found"));
+    }
+
+    private Participation checkAndGetParticipation(Long reqId) {
+        return participationRepository.findById(reqId)
+                .orElseThrow(() -> new NotFoundException("participation request with id = " + reqId + " not found"));
     }
 }

@@ -9,7 +9,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static ru.practicum.utility.Constant.DATE_TIME_FORMAT;
 
 @Service
 public class EventClient extends BaseClient {
@@ -31,7 +32,7 @@ public class EventClient extends BaseClient {
                 .uri(uri)
                 .app("main_service")
                 .timestamp(LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .format(DATE_TIME_FORMAT))
                 .build());
     }
 }

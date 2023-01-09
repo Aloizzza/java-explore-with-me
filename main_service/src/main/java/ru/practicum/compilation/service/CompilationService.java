@@ -1,13 +1,13 @@
 package ru.practicum.compilation.service;
 
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 
 import java.util.List;
 
 public interface CompilationService {
-    List<CompilationDto> getAll(Boolean pinned, PageRequest pageRequest);
+    List<CompilationDto> getAll(Boolean pinned, Pageable pageable);
 
     CompilationDto create(NewCompilationDto compilationDto);
 

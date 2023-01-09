@@ -4,9 +4,9 @@ import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.model.Comment;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static ru.practicum.comment.model.CommentState.NEW;
+import static ru.practicum.utility.Constant.DATE_TIME_FORMAT;
 
 public class CommentMapper {
     public static CommentDto toCommentDto(Comment comment) {
@@ -16,7 +16,7 @@ public class CommentMapper {
                 .text(comment.getText())
                 .authorName(comment.getUser().getName())
                 .createdOn(comment.getCreatedOn()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .format(DATE_TIME_FORMAT))
                 .build();
     }
 

@@ -60,4 +60,7 @@ public class Event {
 
     @Builder.Default
     private Long views = 0L;
+
+    @Column(name = "confirmed_requests")
+    private Long confirmedRequests;
 }

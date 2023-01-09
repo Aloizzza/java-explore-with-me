@@ -1,18 +1,19 @@
 package ru.practicum.event.service;
 
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.event.dto.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
     List<EventDto> getAllByAdmin(List<Long> userIds, List<String> states, List<Long> categoryIds,
-                                 String rangeStart, String rangeEnd, PageRequest pageRequest);
+                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable);
 
-    List<ShortEventDto> getByUserId(Long userId, PageRequest pageRequest);
+    List<ShortEventDto> getByUserId(Long userId, Pageable pageable);
 
-    List<ShortEventDto> getAll(String text, List<Long> categoryIds, Boolean paid, String rangeStart, String rangeEnd,
-                               Boolean onlyAvailable, String sort, PageRequest pageRequest);
+    List<ShortEventDto> getAll(String text, List<Long> categoryIds, Boolean paid, LocalDateTime rangeStart,
+                               LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Pageable pageable);
 
     EventDto create(Long userId, NewEventDto eventDto);
 
