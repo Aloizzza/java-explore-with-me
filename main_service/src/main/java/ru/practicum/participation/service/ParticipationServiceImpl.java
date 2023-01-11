@@ -51,10 +51,6 @@ public class ParticipationServiceImpl implements ParticipationService {
         if (!participation.getEvent().getState().equals(PUBLISHED)) {
             throw new BadRequestException("event is not published");
         }
-        if (participation.getEvent().getParticipantLimit() <= participationRepository
-                .countParticipationByEventIdAndStatus(eventId, CONFIRMED)) {
-            throw new BadRequestException("limit of requests for participation has been exhausted");
-        }
         if (Boolean.TRUE.equals(participation.getEvent().getRequestModeration())) {
             participation.setStatus(PENDING);
         }
