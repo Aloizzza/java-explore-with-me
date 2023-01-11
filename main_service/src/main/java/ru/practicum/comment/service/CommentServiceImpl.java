@@ -48,7 +48,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
     public CommentDto create(CommentDto commentDto, Long userId, Long eventId) {
         User user = checkAndGetUser(userId);
         Event event = checkAndGetEvent(eventId);
@@ -61,7 +60,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
     public CommentDto update(Long commentId, Long userId, CommentDto commentDto) {
         Comment comment = commentRepository.findByIdAndUserId(commentId, userId)
                 .orElseThrow(() -> new BadRequestException("only author can change comment"));
@@ -73,7 +71,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
     public void delete(Long commentId, Long userId) {
         Comment comment = commentRepository.findByIdAndUserId(commentId, userId)
                 .orElseThrow(() -> new BadRequestException("only author can delete comment"));
@@ -81,7 +78,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
     public CommentDto approve(Long commentId) {
         Comment comment = checkAndGetComment(commentId);
         comment.setState(APPROVED);
@@ -91,7 +87,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
     public CommentDto reject(Long commentId) {
         Comment comment = checkAndGetComment(commentId);
         comment.setState(REJECTED);
