@@ -32,9 +32,6 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Transactional
     @Override
     public ParticipationDto create(Long userId, Long eventId) {
-/*        if (userId == null || eventId == null) {
-            throw new BadRequestException("user id and event id must not be null");
-        }*/
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("user with id = " + userId + " not found"));
         Event event = checkAndGetEvent(eventId);
