@@ -236,7 +236,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"text\": \"cool event\"\r\n}",
+					"raw": "{\r\n    \"text\": \"Круто, я с вами!\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
