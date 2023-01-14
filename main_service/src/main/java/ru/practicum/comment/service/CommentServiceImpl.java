@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static ru.practicum.comment.model.CommentState.*;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
