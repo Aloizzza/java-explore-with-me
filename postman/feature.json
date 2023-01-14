@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "12397fbe-cd8d-482e-a437-cf02fb81e778",
-		"name": "feature",
+		"_postman_id": "e6683f32-3282-41c2-af62-3bfc63651362",
+		"name": "feature Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "22531742"
 	},
@@ -43,7 +43,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"ivan\",\r\n    \"email\": \"ivanivanov@ya.ru\"\r\n}",
+					"raw": "{\r\n    \"name\": \"ekaterina\",\r\n    \"email\": \"leonova@ya.ru\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -100,7 +100,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"categoryName\"\r\n}",
+					"raw": "{\r\n    \"name\": \"Веселые выходные\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -176,7 +176,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"annotation\": \"Сплав на байдарках похож на полет.\",\r\n  \"category\": 1,\r\n  \"description\": \"Сплав на байдарках похож на полет. На спокойной воде — это парение. На бурной, порожистой — выполнение фигур высшего пилотажа. И то, и другое дарят чувство обновления, феерические эмоции, яркие впечатления.\",\r\n  \"eventDate\": \"2024-12-31 15:10:05\",\r\n  \"location\": {\r\n    \"lat\": 55.75,\r\n    \"lon\": 37.62\r\n  },\r\n  \"paid\": true,\r\n  \"participantLimit\": 10,\r\n  \"requestModeration\": false,\r\n  \"title\": \"Сплав на байдарках\"\r\n}",
+					"raw": "{\r\n  \"annotation\": \"Рыбалка в рыбхозе\",\r\n  \"category\": 1,\r\n  \"description\": \"Ищу компанию для совместной рыбалки\",\r\n  \"eventDate\": \"2023-07-15 10:10:00\",\r\n  \"location\": {\r\n    \"lat\": 55.55,\r\n    \"lon\": 38.32\r\n  },\r\n  \"paid\": true,\r\n  \"participantLimit\": 10,\r\n  \"requestModeration\": false,\r\n  \"title\": \"Рыбалка\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -236,7 +236,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"text\": \"cool event\"\r\n}",
+					"raw": "{\r\n    \"text\": \"Хорошее место, есть мангальная зона\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -297,7 +297,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"text\": \"bad event\"\r\n}",
+					"raw": "{\r\n    \"text\": \"Можно приготовить улов сразу же\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -322,7 +322,7 @@
 			"response": []
 		},
 		{
-			"name": "Get all comments before approve",
+			"name": "Get comments before approving",
 			"event": [
 				{
 					"listen": "test",
@@ -395,7 +395,7 @@
 			"response": []
 		},
 		{
-			"name": "Get all comments after approve",
+			"name": "Get comments after approving",
 			"event": [
 				{
 					"listen": "test",
@@ -481,7 +481,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"petr\",\r\n    \"email\": \"petrpetrov@ya.ru\"\r\n}",
+					"raw": "{\r\n    \"name\": \"maks\",\r\n    \"email\": \"maksim@ya.ru\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -510,8 +510,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 403 и данные в формате json\", function () {\r",
-							"    pm.response.to.have.status(403);\r",
+							"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
 							"    pm.response.to.be.withBody;\r",
 							"    pm.response.to.be.json;\r",
 							"});"
@@ -525,7 +525,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"text\": \"update\"\r\n}",
+					"raw": "{\r\n    \"text\": \"Кто здесь\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
