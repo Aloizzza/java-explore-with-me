@@ -217,7 +217,6 @@ public class EventServiceImpl implements EventService {
 
         return setConfirmedRequests(eventDto);
     }
-
     @Override
     public EventDto updateByAdmin(Long eventId, AdminUpdateEventDto eventDto) {
         Event event = checkAndGetEvent(eventId);
