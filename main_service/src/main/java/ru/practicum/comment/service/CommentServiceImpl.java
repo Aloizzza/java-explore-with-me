@@ -29,6 +29,7 @@ public class CommentServiceImpl implements CommentService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> getAllByEvent(Long eventId, Pageable pageable) {
         Event event = checkAndGetEvent(eventId);
 
@@ -39,6 +40,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> getAllByUser(Long userId, Pageable pageable) {
         User user = checkAndGetUser(userId);
         return commentRepository.findAllByUser(user, pageable)

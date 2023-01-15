@@ -31,7 +31,7 @@ import static ru.practicum.participation.model.StatusRequest.CONFIRMED;
 import static ru.practicum.utility.Constant.DATE_TIME_FORMAT;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
@@ -41,6 +41,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventDto> getAllByAdmin(List<Long> userIds, List<String> states, List<Long> categoryIds,
                                         LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable) {
         List<State> stateList = new ArrayList<>();
@@ -58,6 +59,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ShortEventDto> getByUserId(Long userId, Pageable pageable) {
         checkAndGetUser(userId);
 
@@ -69,6 +71,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ShortEventDto> getAll(String text, List<Long> categoryIds, Boolean paid, LocalDateTime rangeStart,
                                       LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Pageable pageable) {
         List<ShortEventDto> events = eventRepository
@@ -103,7 +106,6 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public EventDto create(Long userId, NewEventDto eventDto) {
         User user = checkAndGetUser(userId);
@@ -121,7 +123,6 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventDto(newEvent);
     }
 
-    @Transactional
     @Override
     public EventDto publish(Long eventId) {
         Event event = checkAndGetEvent(eventId);
@@ -138,6 +139,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventDto getById(Long id) {
         Event event = checkAndGetEvent(id);
         if (!event.getState().equals(PUBLISHED)) {
@@ -149,6 +151,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventDto getByUser(Long eventId, Long userId) {
         Event event = checkAndGetEvent(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
@@ -158,7 +161,6 @@ public class EventServiceImpl implements EventService {
         return setConfirmedRequests(EventMapper.toEventDto(event));
     }
 
-    @Transactional
     @Override
     public EventDto reject(Long eventId) {
         Event event = checkAndGetEvent(eventId);
@@ -168,7 +170,6 @@ public class EventServiceImpl implements EventService {
         return setConfirmedRequests(eventDto);
     }
 
-    @Transactional
     @Override
     public EventDto update(Long userId, UserUpdateEventDto eventDto) {
         Event event = checkAndGetEvent(eventDto.getEventId());
@@ -202,7 +203,6 @@ public class EventServiceImpl implements EventService {
         return setConfirmedRequests(returnEventDto);
     }
 
-    @Transactional
     @Override
     public EventDto cancelByUser(Long eventId, Long userId) {
         Event event = checkAndGetEvent(eventId);
@@ -217,8 +217,7 @@ public class EventServiceImpl implements EventService {
 
         return setConfirmedRequests(eventDto);
     }
-
-    @Transactional
+    
     @Override
     public EventDto updateByAdmin(Long eventId, AdminUpdateEventDto eventDto) {
         Event event = checkAndGetEvent(eventId);

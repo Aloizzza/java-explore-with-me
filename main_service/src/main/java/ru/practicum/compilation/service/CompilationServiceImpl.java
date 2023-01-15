@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static ru.practicum.participation.model.StatusRequest.CONFIRMED;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @AllArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
@@ -29,6 +29,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final ParticipationRepository participationRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CompilationDto> getAll(Boolean pinned, Pageable pageable) {
         if (pinned == null) {
 
@@ -45,7 +46,6 @@ public class CompilationServiceImpl implements CompilationService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public CompilationDto create(NewCompilationDto compilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(compilationDto);
@@ -57,11 +57,11 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompilationDto getById(Long id) {
         return setViewsAndConfirmedRequests(CompilationMapper.toCompilationDto(getAndCheckCompilation(id)));
     }
 
-    @Transactional
     @Override
     public void addEventToCompilation(Long id, Long eventId) {
         Compilation compilation = getAndCheckCompilation(id);
@@ -69,7 +69,6 @@ public class CompilationServiceImpl implements CompilationService {
         compilationRepository.save(compilation);
     }
 
-    @Transactional
     @Override
     public void addCompilationToMainPage(Long id) {
         Compilation compilation = getAndCheckCompilation(id);
@@ -77,21 +76,18 @@ public class CompilationServiceImpl implements CompilationService {
         compilationRepository.save(compilation);
     }
 
-    @Transactional
     @Override
     public void delete(Long id) {
         compilationRepository.delete(getAndCheckCompilation(id));
     }
 
-    @Transactional
     @Override
     public void deleteEventFromCompilation(Long id, Long eventId) {
         Compilation compilation = getAndCheckCompilation(id);
         compilation.getEvents().remove(getAndCheckEvent(eventId));
         compilationRepository.save(compilation);
     }
-
-    @Transactional
+    
     @Override
     public void deleteCompilationFromMainPage(Long id) {
         Compilation compilation = getAndCheckCompilation(id);

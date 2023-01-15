@@ -15,12 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAll(List<Long> ids, Pageable pageable) {
         if (ids.isEmpty()) {
             return userRepository.findAll(pageable)
@@ -35,7 +36,6 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public UserDto create(UserDto userDto) {
         if (userRepository.findByName(userDto.getName()).isPresent()) {
@@ -46,7 +46,6 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(newUser);
     }
 
-    @Transactional
     @Override
     public void delete(Long id) {
         User user = userRepository.findById(id)
