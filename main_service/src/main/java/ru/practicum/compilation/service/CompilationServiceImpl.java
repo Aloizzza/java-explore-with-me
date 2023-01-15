@@ -87,6 +87,7 @@ public class CompilationServiceImpl implements CompilationService {
         compilation.getEvents().remove(getAndCheckEvent(eventId));
         compilationRepository.save(compilation);
     }
+
     @Override
     public void deleteCompilationFromMainPage(Long id) {
         Compilation compilation = getAndCheckCompilation(id);
