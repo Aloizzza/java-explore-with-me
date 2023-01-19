@@ -22,10 +22,10 @@ public class Comment {
     @Column(length = 1000, nullable = false)
     private String text;
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
-    @OneToOne
+    @ManyToOne
     private Event event;
 
     @Column(name = "created_on", nullable = false)

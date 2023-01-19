@@ -22,14 +22,13 @@ import static ru.practicum.event.model.State.PUBLISHED;
 import static ru.practicum.participation.model.StatusRequest.*;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @AllArgsConstructor
 public class ParticipationServiceImpl implements ParticipationService {
     private final ParticipationRepository participationRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
-    @Transactional
     @Override
     public ParticipationDto create(Long userId, Long eventId) {
         User user = userRepository.findById(userId)
@@ -51,10 +50,6 @@ public class ParticipationServiceImpl implements ParticipationService {
         if (!participation.getEvent().getState().equals(PUBLISHED)) {
             throw new BadRequestException("event is not published");
         }
-        if (participation.getEvent().getParticipantLimit() <= participationRepository
-                .countParticipationByEventIdAndStatus(eventId, CONFIRMED)) {
-            throw new BadRequestException("limit of requests for participation has been exhausted");
-        }
         if (Boolean.TRUE.equals(participation.getEvent().getRequestModeration())) {
             participation.setStatus(PENDING);
         }
@@ -64,6 +59,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationDto> getAllByUserId(Long userId) {
         return participationRepository.findAllByRequesterId(userId)
                 .stream()
@@ -72,6 +68,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationDto> getAllByUserIdForEvent(Long eventId, Long userId) {
         Event event = checkAndGetEvent(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
@@ -84,7 +81,6 @@ public class ParticipationServiceImpl implements ParticipationService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public ParticipationDto cancel(Long userId, Long reqId) {
         Participation participation = participationRepository.findByIdAndRequesterId(reqId, userId)
@@ -95,7 +91,6 @@ public class ParticipationServiceImpl implements ParticipationService {
         return ParticipationMapper.toParticipationDto(savedParticipation);
     }
 
-    @Transactional
     @Override
     public ParticipationDto reject(Long eventId, Long userId, Long reqId) {
         Participation participation = checkAndGetParticipation(reqId);
@@ -112,7 +107,6 @@ public class ParticipationServiceImpl implements ParticipationService {
         return ParticipationMapper.toParticipationDto(savedParticipation);
     }
 
-    @Transactional
     @Override
     public ParticipationDto confirm(Long eventId, Long userId, Long reqId) {
         Participation participation = checkAndGetParticipation(reqId);

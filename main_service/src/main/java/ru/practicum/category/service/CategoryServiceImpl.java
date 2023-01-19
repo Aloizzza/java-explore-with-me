@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> getAll(Pageable pageable) {
         return categoryRepository.findAll(pageable)
                 .stream()
@@ -32,7 +33,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
         Category category = getAndCheckCategory(categoryDto.getId());
@@ -44,7 +44,6 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryMapper.toCategoryDto(categoryRepository.save(category));
     }
 
-    @Transactional
     @Override
     public CategoryDto create(NewCategoryDto categoryDto) {
         String name = categoryDto.getName();
@@ -57,11 +56,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto getById(Long id) {
         return CategoryMapper.toCategoryDto(getAndCheckCategory(id));
     }
 
-    @Transactional
     @Override
     public void delete(Long id) {
         if (!eventRepository.findAllByCategoryId(id).isEmpty()) {
